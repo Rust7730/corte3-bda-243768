@@ -34,3 +34,42 @@ Si se revocan todos los permisos de `rol_veterinario` y se le deja únicamente e
 1. **Agendar nuevas citas:** Fallaría porque el rol ya no tendría permiso de `INSERT` sobre la tabla `citas`.
 2. **Aplicar vacunas:** Fallaría porque ya no tendría permisos de `INSERT` sobre `vacunas_aplicadas`.
 3. **Ver catálogo de vacunas disponibles:** Fallaría al intentar hacer `SELECT` sobre la tabla `vacunas`, rompiendo la interfaz del veterinario.
+
+###  1. Capturas de Inyección SQL (SQLi)
+Ve a tu pantalla de **Búsqueda** (`/front/dashboard`). Asegúrate de haber iniciado sesión como Recepción o Admin.
+
+1.  **Ataque 1 (Bypass):**
+    * Escribe exactamente esto en la barra de búsqueda: `' OR '1'='1`
+    * Dale a Buscar.
+![alt text](image.png)
+2.  **Ataque 2 (Destrucción):**
+    * Escribe esto en la barra: `'; DROP TABLE mascotas; --`
+    * Dale a Buscar.
+    * ![alt text](image-1.png)
+3.  **Ataque 3 (Extracción):**
+    * Escribe esto: `' UNION SELECT id, nombre, null, null, null, null FROM usuarios --`
+    * Dale a Buscar.
+    * ![alt text](image-2.png).
+
+### 📸 2. Capturas de Seguridad RLS
+Aquí demostramos que los veterinarios no pueden ver lo de otros.
+
+1.  **Veterinario 1:**
+    * Ve a la pantalla de Inicio/Login. Elige **Veterinario** y pon el **ID 1**.
+    * Ve a Búsqueda y dale al botón de "Buscar" dejando el campo de texto vacío (para que traiga todos sus pacientes).
+    * ![alt text](image-3.png)
+2.  **Veterinario 2:**
+    * Regresa al Login. Elige **Veterinario** y ahora pon el **ID 2**.
+    * Ve a Búsqueda y vuelve a buscar en blanco.
+    *![alt text](image-4.png)
+
+###  3. Capturas de Redis (El Caché)
+Esta es la más técnica. Ve a la pantalla de **Vacunación** (`/front/vacunacion`).
+
+1.  Abre las Herramientas de Desarrollador de tu navegador (Presiona `F12` o clic derecho > Inspeccionar).
+2.  Ve a la pestaña **Network** (Red) y filtra por `Fetch/XHR`.
+3.  **El MISS (Lento):** Recarga la página (`F5`). Busca en la lista de red la petición a `vacunacion-pendiente`. Verás que tarda unos `200ms` a `500ms`. 
+![alt text](image-5.png)
+4.  **El HIT (Rápido):** Vuelve a recargar la página inmediatamente. Verás que ahora la misma petición tarda unos `5ms` a `20ms`. ![alt text](image-6.png)
+5.  **La Invalidación:** Haz clic en un botón de "Aplicar Vacuna".  ![alt text](image-7.png)
+
