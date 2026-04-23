@@ -18,8 +18,8 @@ export default function Header() {
           </h1>
         </div>
         <div style={{ display: 'flex', gap: '20px' }}>
-          <Link href="/dashboard" style={{ textDecoration: 'none', color: 'var(--text-dark)', fontWeight: '600' }}>Búsqueda</Link>
-          <Link href="/vacunacion" style={{ textDecoration: 'none', color: 'var(--text-dark)', fontWeight: '600' }}>Vacunación</Link>
+          <Link href="/front/dashboard" style={{ textDecoration: 'none', color: 'var(--text-dark)', fontWeight: '600' }}>Búsqueda</Link>
+          <Link href="/front/vacunacion" style={{ textDecoration: 'none', color: 'var(--text-dark)', fontWeight: '600' }}>Vacunación</Link>
           <Link href="/" style={{ textDecoration: 'none', color: 'var(--secondary-magenta)', fontWeight: '600' }}>Cambiar Rol</Link>
         </div>
       </nav>

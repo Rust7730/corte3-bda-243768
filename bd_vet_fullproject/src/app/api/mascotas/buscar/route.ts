@@ -13,7 +13,7 @@ export async function GET(request: Request) {
 
  
     const query = `
-      SELECT id, nombre, especie, raza, fecha_nacimiento, id_dueno 
+      SELECT id, nombre, especie, fecha_nacimiento, dueno_id 
       FROM mascotas 
       WHERE nombre ILIKE $1
     `;

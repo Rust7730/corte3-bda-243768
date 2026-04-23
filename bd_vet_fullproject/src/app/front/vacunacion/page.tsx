@@ -33,8 +33,7 @@ export default function VacunacionPage() {
     setAplicando(mascotaId);
     setMensaje('');
     try {
-      // Aquí llamarías a tu endpoint POST /api/aplicar-vacuna
-      // Por ahora simulamos la petición para no bloquearte
+      // Llamada al endpoint POST para aplicar la vacuna
       const res = await fetch('/api/aplicar-vacuna', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -42,16 +41,18 @@ export default function VacunacionPage() {
       });
 
       if (res.ok) {
-        setMensaje('Vacuna aplicada. Caché invalidado.');
+        setMensaje('Vacuna aplicada en BD. Caché de Redis invalidado.');
         // Recargar la lista (esto forzará un MISS en el caché y actualizará los datos)
         await cargarPendientes();
+      } else {
+        setMensaje('Error al aplicar vacuna. Verifica tus permisos RLS.');
       }
     } catch (error) {
-      setMensaje('Error al aplicar vacuna');
+      setMensaje('Error de red al aplicar vacuna');
     } finally {
       setAplicando(null);
-      // Limpiar el mensaje de éxito después de 3 segundos
-      setTimeout(() => setMensaje(''), 3000);
+      // Limpiar el mensaje de éxito después de 4 segundos
+      setTimeout(() => setMensaje(''), 4000);
     }
   };
 
@@ -64,19 +65,30 @@ export default function VacunacionPage() {
             Vacunación <span style={{ color: 'var(--primary-blue)' }}>Pendiente</span>
           </h2>
           <p style={{ color: 'var(--text-light)' }}>
-            Superficie de prueba para caché Redis. Observa la latencia en la consola de red al recargar.
+            Superficie de prueba para caché Redis. 
+            <br/><strong>Tip para la defensa:</strong> Abre la pestaña Network (F12) y observa el tiempo de respuesta al recargar.
           </p>
         </section>
 
         {mensaje && (
-          <div style={{ backgroundColor: 'var(--secondary-magenta)', color: 'white', padding: '10px', textAlign: 'center', borderRadius: '5px', marginBottom: '20px' }}>
+          <div style={{ 
+            backgroundColor: mensaje.includes('Error') ? 'var(--secondary-magenta)' : 'var(--primary-blue)', 
+            color: 'white', 
+            padding: '12px', 
+            textAlign: 'center', 
+            borderRadius: '5px', 
+            marginBottom: '20px',
+            fontWeight: '600'
+          }}>
             {mensaje}
           </div>
         )}
 
         <div style={{ backgroundColor: 'white', borderRadius: '10px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
           {loading && pendientes.length === 0 ? (
-            <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-light)' }}>Consultando datos (revisando caché)...</div>
+            <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-light)' }}>
+              Consultando base de datos (o caché)...
+            </div>
           ) : (
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
               <thead>
@@ -90,12 +102,14 @@ export default function VacunacionPage() {
               <tbody>
                 {pendientes.length === 0 ? (
                   <tr>
-                    <td colSpan={4} style={{ padding: '20px', textAlign: 'center', color: 'var(--text-light)' }}>No hay vacunaciones pendientes.</td>
+                    <td colSpan={4} style={{ padding: '20px', textAlign: 'center', color: 'var(--text-light)' }}>
+                      No hay vacunaciones pendientes registradas.
+                    </td>
                   </tr>
                 ) : (
                   pendientes.map((item, index) => (
                     <tr key={`${item.mascota_id}-${item.vacuna_id}-${index}`} style={{ borderBottom: '1px solid var(--border-color)' }}>
-                      <td style={{ padding: '15px 20px' }}>#{item.mascota_id}</td>
+                      <td style={{ padding: '15px 20px', color: 'var(--text-light)' }}>#{item.mascota_id}</td>
                       <td style={{ padding: '15px 20px', fontWeight: '600' }}>{item.nombre_mascota}</td>
                       <td style={{ padding: '15px 20px', color: 'var(--secondary-magenta)' }}>{item.nombre_vacuna}</td>
                       <td style={{ padding: '15px 20px', textAlign: 'right' }}>
@@ -103,9 +117,14 @@ export default function VacunacionPage() {
                           className="btn-primary" 
                           onClick={() => aplicarVacuna(item.mascota_id, item.vacuna_id)}
                           disabled={aplicando === item.mascota_id}
-                          style={{ padding: '8px 15px', fontSize: '12px', opacity: aplicando === item.mascota_id ? 0.5 : 1 }}
+                          style={{ 
+                            padding: '8px 15px', 
+                            fontSize: '12px', 
+                            opacity: aplicando === item.mascota_id ? 0.5 : 1,
+                            cursor: aplicando === item.mascota_id ? 'not-allowed' : 'pointer'
+                          }}
                         >
-                          {aplicando === item.mascota_id ? 'Aplicando...' : 'Aplicar Vacuna'}
+                          {aplicando === item.mascota_id ? 'Registrando...' : 'Aplicar Vacuna'}
                         </button>
                       </td>
                     </tr>

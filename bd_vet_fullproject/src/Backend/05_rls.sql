@@ -16,7 +16,7 @@ USING (
     id IN (
         SELECT mascota_id 
         FROM vet_atiende_mascota 
-        WHERE veterinario_id = current_setting('app.current_vet_id', true)::integer
+        WHERE vet_id = current_setting('app.current_vet_id', true)::integer
     )
 );
 
@@ -33,7 +33,7 @@ USING (
     mascota_id IN (
         SELECT mascota_id 
         FROM vet_atiende_mascota 
-        WHERE veterinario_id = current_setting('app.current_vet_id', true)::integer
+        WHERE vet_id = current_setting('app.current_vet_id', true)::integer
     )
 );
 

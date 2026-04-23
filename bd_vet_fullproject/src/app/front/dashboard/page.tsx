@@ -16,7 +16,6 @@ export default function DashboardPage() {
     setLoading(true);
     setError('');
     try {
-      // Esta llamada dispara el RLS y el query parametrizado
       const res = await fetch(`/api/mascotas/buscar?q=${encodeURIComponent(termino)}`);
       if (res.ok) {
         const data = await res.json();

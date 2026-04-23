@@ -5,7 +5,7 @@ SELECT
     v.id AS vacuna_id,
     v.nombre AS nombre_vacuna
 FROM mascotas m
-CROSS JOIN vacunas v 
+CROSS JOIN inventario_vacunas v 
 LEFT JOIN vacunas_aplicadas va 
     ON m.id = va.mascota_id 
     AND v.id = va.vacuna_id

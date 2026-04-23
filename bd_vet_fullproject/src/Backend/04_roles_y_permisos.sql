@@ -6,6 +6,10 @@ CREATE ROLE rol_admin WITH LOGIN PASSWORD 'admin123';
 CREATE ROLE rol_recepcion WITH LOGIN PASSWORD 'recepcion123';
 CREATE ROLE rol_veterinario WITH LOGIN PASSWORD 'vet123';
 
+GRANT rol_admin TO admin_bda;
+GRANT rol_recepcion TO admin_bda;
+GRANT rol_veterinario TO admin_bda;
+
 REVOKE ALL ON ALL TABLES IN SCHEMA public FROM PUBLIC;
 REVOKE ALL ON ALL SEQUENCES IN SCHEMA public FROM PUBLIC;
 
@@ -33,7 +37,7 @@ REVOKE ALL PRIVILEGES ON vacunas_aplicadas FROM rol_recepcion;
 GRANT SELECT ON mascotas TO rol_veterinario;
 GRANT SELECT, INSERT, UPDATE ON citas TO rol_veterinario;
 GRANT SELECT, INSERT ON vacunas_aplicadas TO rol_veterinario;
-GRANT SELECT ON vacunas TO rol_veterinario; 
+GRANT SELECT ON inventario_vacunas TO rol_veterinario;
 GRANT SELECT ON vet_atiende_mascota TO rol_veterinario;
 
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO rol_recepcion;

@@ -1,6 +1,6 @@
 # Sistema Full-Stack Clínica Veterinaria - Evaluación Corte 3
-**Alumno:** Rodolfo Ramirez Reyes
-**Matrícula:** 243768
+**Alumno:** [Tu Nombre]
+**Matrícula:** [Tu Matrícula]
 
 ## Documento de Decisiones de Diseño
 
