@@ -12,7 +12,6 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
 
-    // Llamada al endpoint de autenticación que armamos antes
     const res = await fetch('/api/auth', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -23,7 +22,6 @@ export default function LoginPage() {
     });
 
     if (res.ok) {
-      // Redirigir al dashboard después de "iniciar sesión"
       router.push('/dashboard');
     } else {
       const data = await res.json();
