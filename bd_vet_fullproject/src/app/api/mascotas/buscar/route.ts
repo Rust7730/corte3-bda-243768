@@ -9,10 +9,9 @@ export async function GET(request: Request) {
 
     const cookieStore = await cookies();
     const userRole = cookieStore.get('userRole')?.value || 'rol_recepcion';
-    const vetIdValue = cookieStore.get('vetId')?.value;
-    const vetId = vetIdValue ? parseInt(vetIdValue) : undefined;
+    const vetId = cookieStore.get('vetId')?.value ? parseInt(cookieStore.get('vetId')?.value as string) : undefined;
 
-
+ 
     const query = `
       SELECT id, nombre, especie, raza, fecha_nacimiento, id_dueno 
       FROM mascotas 
@@ -23,8 +22,8 @@ export async function GET(request: Request) {
     const resultados = await executeQuery(query, params, userRole, vetId);
 
     return NextResponse.json(resultados);
-  } catch {
-    console.error("Error en búsqueda");
+  } catch (error: any) {
+    console.error("Error en búsqueda:", error);
     return NextResponse.json({ error: 'Error al buscar mascotas' }, { status: 500 });
   }
 }

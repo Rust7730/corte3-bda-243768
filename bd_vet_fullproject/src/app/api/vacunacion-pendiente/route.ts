@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { executeQuery } from '@/lib/db';
 import { createClient } from 'redis';
 
-// Instancia global de Redis
 const redisClient = createClient({ url: process.env.REDIS_URL });
 redisClient.connect().catch(console.error);
 
@@ -10,7 +9,6 @@ export async function GET(request: Request) {
   try {
     const cacheKey = 'vacunacion_pendiente';
     
-    // 1. Intentar buscar en Redis
     const cachedData = await redisClient.get(cacheKey);
     
     if (cachedData) {

@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: ${CONTAINER_NAME}
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./schema.sql:/docker-entrypoint-initdb.d/00_schema.sql
+      - ./Backend/01_procedures.sql:/docker-entrypoint-initdb.d/01_procedures.sql
+      - ./Backend/02_triggers.sql:/docker-entrypoint-initdb.d/02_triggers.sql
+      - ./Backend/03_views.sql:/docker-entrypoint-initdb.d/03_views.sql
+      - ./Backend/04_roles_y_permisos.sql:/docker-entrypoint-initdb.d/04_roles_y_permisos.sql
+      - ./Backend/05_rls.sql:/docker-entrypoint-initdb.d/05_rls.sql
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: ${CONTAINER_NAME_REDIS}
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+volumes:
+  pgdata:

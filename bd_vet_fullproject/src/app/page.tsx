@@ -22,7 +22,7 @@ export default function LoginPage() {
     });
 
     if (res.ok) {
-      router.push('/dashboard');
+      router.push('/front/dashboard');
     } else {
       const data = await res.json();
       setError(data.error || 'Error al autenticar');

@@ -8,7 +8,6 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Cargar todas las mascotas permitidas al inicio
   useEffect(() => {
     buscarMascotas('');
   }, []);

@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server';
 import { AuthSchema } from '@/lib/schema';
+import { cookies } from 'next/headers';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     
+    // 1. Validación estricta con Zod
     const result = AuthSchema.safeParse(body);
     if (!result.success) {
       return NextResponse.json({ error: 'Datos inválidos', detalles: result.error.issues }, { status: 400 });
@@ -12,22 +14,24 @@ export async function POST(request: Request) {
 
     const { rol, veterinario_id } = result.data;
 
+    // 2. Regla de negocio: Si es veterinario, DEBE enviar su ID para el RLS
     if (rol === 'rol_veterinario' && !veterinario_id) {
       return NextResponse.json({ error: 'Falta el ID del veterinario' }, { status: 400 });
     }
 
-    const response = NextResponse.json({ success: true, rol, veterinario_id });
-    response.cookies.set('userRole', rol, { httpOnly: true, path: '/' });
+    // 3. Guardar en cookies (Simulación de sesión)
+    const cookieStore = await cookies();
+    cookieStore.set('userRole', rol, { httpOnly: true, path: '/' });
     
     if (veterinario_id) {
-      response.cookies.set('vetId', veterinario_id.toString(), { httpOnly: true, path: '/' });
+      cookieStore.set('vetId', veterinario_id.toString(), { httpOnly: true, path: '/' });
     } else {
-      response.cookies.delete('vetId'); // Limpiar ID si cambió a admin o recepción
+      cookieStore.delete('vetId');
     }
 
-    return response;
+    return NextResponse.json({ success: true, rol, veterinario_id });
 
-  } catch {
+  } catch (error) {
     return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
   }
 }
