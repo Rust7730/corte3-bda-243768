@@ -4,6 +4,11 @@
 
 ## Documento de Decisiones de Diseño
 
+## Como inicializar el proyecto:
+Solo debes realizar un `docker compose up`
+poserriormente utilizar un `npm install `
+y por ultimo un `npm rundev`
+
 ### 1. ¿Qué política RLS aplicaste a la tabla mascotas?
 **Cláusula:**
 `USING (id IN (SELECT mascota_id FROM vet_atiende_mascota WHERE veterinario_id = current_setting('app.current_vet_id', true)::integer))`
